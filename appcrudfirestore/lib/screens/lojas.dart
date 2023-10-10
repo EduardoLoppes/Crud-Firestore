@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<Home> {
   // text fields' controllers
 
   final TextEditingController _nomeController = TextEditingController();
@@ -26,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   //final TextEditingController _imageController = TextEditingController();
 
-  final CollectionReference _usuarioFire =
+  final CollectionReference _lojas =
       FirebaseFirestore.instance.collection('Perfil');
 
   Future<void> _createOrUpdate([DocumentSnapshot? documentSnapshot]) async {
@@ -150,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                       if (action == 'create') {
 // Persist a new product to Firestore
 
-                        await _usuarioFire.add({
+                        await _lojas.add({
                           "nome": nome,
                           "endereco": endereco,
                           "cidade": cidade,
@@ -163,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                       if (action == 'update') {
 // Update the product
 
-                        await _usuarioFire.doc(documentSnapshot!.id).update({
+                        await _lojas.doc(documentSnapshot!.id).update({
                           "nome": nome,
                           "endereco": endereco,
                           "cidade": cidade,
@@ -204,7 +206,7 @@ class _HomePageState extends State<HomePage> {
   // Deleteing a product by id
 
   Future<void> _deleteProduct(String productId) async {
-    await _usuarioFire.doc(productId).delete();
+    await _lojas.doc(productId).delete();
 
 // Show a snackbar
 
@@ -222,7 +224,7 @@ class _HomePageState extends State<HomePage> {
 // Using StreamBuilder to display all products from Firestore in real-time
 
       body: StreamBuilder(
-        stream: _usuarioFire.snapshots(),
+        stream: _lojas.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasData) {
             return ListView.builder(
